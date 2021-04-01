@@ -1,17 +1,21 @@
+import java.util.concurrent.Semaphore;
+
 public class Philosopher extends Thread {
 	private GraphicTable table;
 	private Chopstick left;
 	private Chopstick right;
+	private Semaphore semaphore;
 	private int ID;
 	final int timeThink_max = 5000;
 	final int timeNextFork = 100;
 	final int timeEat_max = 5000;
 	
-	Philosopher(int ID, GraphicTable table, Chopstick left, Chopstick right) {
+	Philosopher(int ID, GraphicTable table, Chopstick left, Chopstick right, Semaphore semaphore) {
 		this.ID = ID;
 		this.table = table;
 		this.left = left;
 		this.right = right;
+		this.semaphore = semaphore;
 		setName("Philosopher "+ID);
 	}
 	
@@ -37,6 +41,15 @@ public class Philosopher extends Thread {
 			System.out.println(getName()+" is hungry"); 
 			// Tell the GUI I am hungry...
 			table.isHungry(ID);
+
+			try 
+			{
+				semaphore.acquire();
+			} 
+			catch (InterruptedException e) 
+			{
+				System.out.println(e);
+			}
 			
 			// Let's try to get the left chopstick
 			System.out.println(getName()+" wants left chopstick");
