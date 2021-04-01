@@ -40,50 +40,76 @@ public class Philosopher extends Thread {
 			
 			// Let's try to get the left chopstick
 			System.out.println(getName()+" wants left chopstick");
-			left.take();
+			boolean leftTake = left.take();
 			
 			// Tell the GUI that I took the left chopstick
-			table.takeChopstick(ID, left.getID());
-			System.out.println(getName()+" got left chopstick");
-			
-			// I'll wait a bit before I try to get the next chopstick (it's philosopher's etiquette)
-			try {
-				sleep(timeNextFork);
-			} catch(InterruptedException e) {
-				System.out.println(e);
-			} 
-			
-			// Ok, enough etiquette nonesense, now I need my right chopstick
-			System.out.println(getName()+" wants right chopstick");
-			right.take();
+			if(leftTake)
+			{
+				table.takeChopstick(ID, left.getID());
+				System.out.println(getName()+" got left chopstick");
 
-			// Got it!
-			table.takeChopstick(ID, right.getID());
-			System.out.println(getName()+" got right chopstick");
-			
-			// Sweet taste of steamed rice....
-			System.out.println(getName()+" eats"); 
-			try {
-				sleep((long)(Math.random()*timeEat_max));
-			} catch(InterruptedException e) {
-				System.out.println(e);
+				try 
+				{
+					sleep(timeNextFork);
+				} 
+				catch(InterruptedException e) 
+				{
+					System.out.println(e);
+				}
+
+				System.out.println(getName()+" wants right chopstick");
+				boolean rightTake = right.take();
+
+				if(rightTake)
+				{
+					// Got it!
+					table.takeChopstick(ID, right.getID());
+					System.out.println(getName()+" got right chopstick");
+					
+					// Sweet taste of steamed rice....
+					System.out.println(getName()+" eats");
+
+					try 
+					{
+						sleep((long)(Math.random()*timeEat_max));
+					} 
+					catch(InterruptedException e) 
+					{
+						System.out.println(e);
+					}
+					
+					// Ok, I am really full now
+					System.out.println(getName()+" finished eating"); 
+					
+					// I just realized I did not wash these chopsticks 
+					// and the philosopher on my right is coming down with a flu 
+					
+					// I'll release the left chopstick
+					table.releaseChopstick(ID, left.getID());
+					left.release();
+					System.out.println(getName()+" released left chopstick");
+
+					// I'll release the right chopstick
+					table.releaseChopstick(ID, right.getID());
+					right.release();
+					System.out.println(getName()+" released right chopstick");
+				}
+
+				else
+				{
+					table.releaseChopstick(ID, left.getID());
+					left.release();
+					System.out.println(getName()+" released left chopstick because he/she did not take the right one");
+				}
 			}
-			
-			// Ok, I am really full now
-			System.out.println(getName()+" finished eating"); 
-			
-			// I just realized I did not wash these chopsticks 
-			// and the philosopher on my right is coming down with a flu 
-			
-			// I'll release the left chopstick
-			table.releaseChopstick(ID, left.getID());
-			left.release();
-			System.out.println(getName()+" released left chopstick");
 
-			// I'll release the right chopstick
-			table.releaseChopstick(ID, right.getID());
-			right.release();
-			System.out.println(getName()+" released right chopstick");
+			else
+			{
+				System.out.println(getName()+" did not take the left chopstick, he/she gives up.");
+			}
+
+
+			
 		
 		}
 	}

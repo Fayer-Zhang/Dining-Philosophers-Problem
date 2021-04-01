@@ -9,7 +9,9 @@ public class Chopstick {
 		free = true;	
 	}
 	
-	synchronized void take() {
+	synchronized boolean take() {
+		boolean res;
+
 		while(!free)
 		{
 			try
@@ -22,7 +24,10 @@ public class Chopstick {
 			}
 		}
 
+		res = free;
 		free = false;
+
+		return res;
 	}
 	
 	synchronized void release() {
