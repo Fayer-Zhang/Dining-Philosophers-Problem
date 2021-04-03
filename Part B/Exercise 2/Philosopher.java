@@ -44,16 +44,15 @@ public class Philosopher extends Thread {
 
 			try 
 			{
+				System.out.println(getName() + " is hungry");
 				semaphore.acquire();
+				left.take();
 			} 
 			catch (InterruptedException e) 
 			{
 				System.out.println(e);
 			}
 			
-			// Let's try to get the left chopstick
-			System.out.println(getName()+" wants left chopstick");
-			left.take();
 			
 			// Tell the GUI that I took the left chopstick
 			table.takeChopstick(ID, left.getID());
@@ -90,6 +89,7 @@ public class Philosopher extends Thread {
 			
 			// I'll release the left chopstick
 			table.releaseChopstick(ID, left.getID());
+			semaphore.release();
 			left.release();
 			System.out.println(getName()+" released left chopstick");
 
